@@ -34,25 +34,25 @@ from utils.runtime import is_live_ui_enabled
 
 @pytest.fixture(scope="session")
 def project_root() -> Path:
-    """中文说明：执行与 project_root 相关的逻辑。"""
+    """中文说明：提供项目根目录夹具，供其余夹具统一复用。"""
     return Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_logging(project_root: Path) -> None:
-    """中文说明：执行与 setup_logging 相关的逻辑。"""
+    """中文说明：在测试会话启动时加载统一日志配置。"""
     configure_logging(project_root / "config" / "logging.yaml")
 
 
 @pytest.fixture(scope="session")
 def app_config(project_root: Path):
-    """中文说明：执行与 app_config 相关的逻辑。"""
+    """中文说明：加载当前测试环境对应的全局配置对象。"""
     return ConfigLoader(project_root).load(os.getenv("TEST_ENV", "test"))
 
 
 @pytest.fixture(scope="session")
 def artifact_manager(project_root: Path, app_config):
-    """中文说明：执行与 artifact_manager 相关的逻辑。"""
+    """中文说明：初始化测试产物管理器，并提前创建产物目录。"""
     manager = ArtifactManager(project_root, app_config.reporting)
     manager.ensure_directories()
     return manager
@@ -60,77 +60,77 @@ def artifact_manager(project_root: Path, app_config):
 
 @pytest.fixture(scope="session")
 def data_loader(project_root: Path):
-    """中文说明：执行与 data_loader 相关的逻辑。"""
+    """中文说明：提供测试数据加载器，供业务流读取外部数据。"""
     return TestDataLoader(project_root / "src" / "data" / "testdata")
 
 
 @pytest.fixture(scope="session")
 def shared_store():
-    """中文说明：执行与 shared_store 相关的逻辑。"""
+    """中文说明：提供跨步骤共享运行态数据的存储对象。"""
     return SharedStore()
 
 
 @pytest.fixture(scope="session")
 def ai_provider(app_config):
-    """中文说明：执行与 ai_provider 相关的逻辑。"""
+    """中文说明：初始化 AI Provider，供定位和分析模块复用。"""
     return OpenAICompatibleProvider(app_config.ai)
 
 
 @pytest.fixture(scope="session")
 def locator_strategy(app_config, ai_provider):
-    """中文说明：执行与 locator_strategy 相关的逻辑。"""
+    """中文说明：构建带自愈能力的统一定位策略对象。"""
     return SelfHealingLocator(app_config.ai, ai_provider)
 
 
 @pytest.fixture(scope="session")
 def assertion_assistant(app_config, ai_provider):
-    """中文说明：执行与 assertion_assistant 相关的逻辑。"""
+    """中文说明：初始化断言助手，用于补充 AI 辅助校验能力。"""
     return AssertionAssistant(app_config.ai, ai_provider)
 
 
 @pytest.fixture(scope="session")
 def failure_analysis_agent(app_config, ai_provider):
-    """中文说明：执行与 failure_analysis_agent 相关的逻辑。"""
+    """中文说明：初始化失败分析代理，用于异常诊断和报告增强。"""
     return FailureAnalysisAgent(app_config.ai, ai_provider)
 
 
 @pytest.fixture(scope="session")
 def oms_api_client(app_config):
-    """中文说明：执行与 oms_api_client 相关的逻辑。"""
+    """中文说明：创建 OMS API 客户端，供 UI 与接口联合校验使用。"""
     return OMSApiClient(app_config.systems["oms"], app_config.api)
 
 
 @pytest.fixture(scope="session")
 def wms_api_client(app_config):
-    """中文说明：执行与 wms_api_client 相关的逻辑。"""
+    """中文说明：创建 WMS API 客户端，供 UI 与接口联合校验使用。"""
     return WMSApiClient(app_config.systems["wms"], app_config.api)
 
 
 @pytest.fixture(scope="session")
 def browser_manager(app_config, artifact_manager):
-    """中文说明：执行与 browser_manager 相关的逻辑。"""
+    """中文说明：提供浏览器会话管理器，统一负责页面生命周期。"""
     return BrowserSessionManager(app_config, artifact_manager)
 
 
 @pytest.fixture()
 def require_live_ui():
-    """中文说明：执行与 require_live_ui 相关的逻辑。"""
+    """中文说明：在真实 UI 未开启时统一跳过依赖页面的用例。"""
     if not is_live_ui_enabled():
         # 中文说明：未开启真实 UI 时统一在这里跳过，避免每个用例都重复判断。
-        pytest.skip("??? ENABLE_LIVE_UI=true????? UI ??")
+        pytest.skip("请先设置 ENABLE_LIVE_UI=true 再执行真实 UI 用例")
 
 
 @pytest.fixture()
 def live_page(browser_manager, require_live_ui):
-    """中文说明：执行与 live_page 相关的逻辑。"""
-    # 中文说明：未开启真实 UI 时统一在这里跳过，避免每个用例都重复判断。?????
+    """中文说明：为每条真实用例提供独立页面会话。"""
+    # 中文说明：为每条真实用例提供独立页面会话，保证不同场景之间相互隔离。
     with browser_manager.page_session() as page:
         yield page
 
 
 @pytest.fixture()
 def oms_flow(live_page, locator_strategy, oms_api_client, assertion_assistant, failure_analysis_agent):
-    """中文说明：执行与 oms_flow 相关的逻辑。"""
+    """中文说明：组装 OMS 业务流对象，供 OMS 场景直接调用。"""
     return OMSOrderFlow(
         OMSLoginPage(live_page, locator_strategy),
         OMSOrderPage(live_page, locator_strategy),
@@ -142,7 +142,7 @@ def oms_flow(live_page, locator_strategy, oms_api_client, assertion_assistant, f
 
 @pytest.fixture()
 def wms_flow(live_page, locator_strategy, wms_api_client, assertion_assistant, failure_analysis_agent):
-    """中文说明：执行与 wms_flow 相关的逻辑。"""
+    """中文说明：组装 WMS 业务流对象，供 WMS 场景直接调用。"""
     return WMSWarehouseFlow(
         WMSLoginPage(live_page, locator_strategy),
         WMSInboundPage(live_page, locator_strategy),
@@ -156,7 +156,7 @@ def wms_flow(live_page, locator_strategy, wms_api_client, assertion_assistant, f
 
 @pytest.fixture()
 def cross_system_flow(live_page, locator_strategy, oms_api_client, wms_api_client, assertion_assistant, failure_analysis_agent):
-    """中文说明：执行与 cross_system_flow 相关的逻辑。"""
+    """中文说明：组装跨系统业务流对象，串联 OMS 与 WMS 的联动场景。"""
     oms_flow = OMSOrderFlow(
         OMSLoginPage(live_page, locator_strategy),
         OMSOrderPage(live_page, locator_strategy),

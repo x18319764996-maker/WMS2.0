@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """中文说明：构建与 build_parser 相关的逻辑。"""
+    """中文说明：构建统一运行入口的命令行参数解析器。"""
     parser = argparse.ArgumentParser(description="统一执行 WMS/OMS UI 自动化场景")
     parser.add_argument(
         "target",
@@ -28,8 +28,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def resolve_target(target: str) -> list[str]:
-    """中文说明：解析与 resolve_target 相关的逻辑。"""
-    # 中文说明：这里统一维护短目标名和测试目录的映射关系，便于命令行直接按域运行。??????????????????????????????
+    """中文说明：把命令行目标映射为 pytest 需要执行的路径范围。"""
+    # 中文说明：这里统一维护短目标名和测试目录的映射关系，便于命令行直接按业务域运行。
     target_map = {
         "all": [],
         "oms": ["tests/oms"],
@@ -41,17 +41,17 @@ def resolve_target(target: str) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """????????????????????????????"""
+    """中文说明：组装 pytest 命令并执行统一场景入口。"""
     project_root = Path(__file__).resolve().parents[2]
     os.chdir(project_root)
     args = build_parser().parse_args(argv)
 
-    # 中文说明：这里统一维护短目标名和测试目录的映射关系，便于命令行直接按域运行。????????????????????????
+    # 中文说明：统一注入默认环境变量，保证本地直接执行时具备最小运行上下文。
     os.environ.setdefault("ENABLE_LIVE_UI", "true")
     os.environ.setdefault("TEST_ENV", "test")
     os.environ.setdefault("AI_MODE", "disabled")
 
-    # ????????? pytest ??????????????????????????
+    # 中文说明：先拼装公共 pytest 参数，再根据目标和关键字补充过滤条件。
     command = [
         sys.executable,
         "-m",
@@ -60,12 +60,12 @@ def main(argv: list[str] | None = None) -> int:
         "--self-contained-html",
     ]
     if args.target != "smoke":
-        # ?????? smoke ?????????????????
+        # 中文说明：除 smoke 外，其余入口默认只执行标记为 e2e 的场景。
         command.extend(["-m", "e2e"])
     if args.keyword:
-        # 中文说明：这里统一维护短目标名和测试目录的映射关系，便于命令行直接按域运行。?????????? pytest -k ???????
+        # 中文说明：当用户提供关键字时，继续用 pytest -k 做更细粒度筛选。
         command.extend(["-k", args.keyword])
-    # 中文说明：这里统一维护短目标名和测试目录的映射关系，便于命令行直接按域运行。????????????????????????
+    # 中文说明：最后补上目标路径范围，让统一入口只运行用户指定的场景集合。
     command.extend(resolve_target(args.target))
     return subprocess.call(command, cwd=project_root)
 
