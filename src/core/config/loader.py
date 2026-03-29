@@ -55,6 +55,10 @@ class ConfigLoader:
 
     def _apply_execution_overrides(self, yaml_execution: Dict[str, Any]) -> Dict[str, Any]:
         merged = dict(yaml_execution)
+        if os.getenv("BROWSER_CHANNEL"):
+            merged["channel"] = os.getenv("BROWSER_CHANNEL", "")
+        if os.getenv("BROWSER_EXECUTABLE_PATH"):
+            merged["executable_path"] = os.getenv("BROWSER_EXECUTABLE_PATH", "")
         explicit_headless = os.getenv("HEADLESS")
         if explicit_headless is not None:
             merged["headless"] = explicit_headless.lower() == "true"

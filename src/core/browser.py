@@ -20,9 +20,16 @@ class BrowserSessionManager:
         self.artifact_manager.ensure_directories()
         with sync_playwright() as playwright:
             browser_type = getattr(playwright, self.config.execution.browser)
+            launch_kwargs = {
+                "headless": self.config.execution.headless,
+                "slow_mo": self.config.execution.slow_mo,
+            }
+            if self.config.execution.channel:
+                launch_kwargs["channel"] = self.config.execution.channel
+            if self.config.execution.executable_path:
+                launch_kwargs["executable_path"] = self.config.execution.executable_path
             browser: Browser = browser_type.launch(
-                headless=self.config.execution.headless,
-                slow_mo=self.config.execution.slow_mo,
+                **launch_kwargs,
             )
             context: BrowserContext = browser.new_context(
                 record_video_dir=str(self.artifact_manager.videos_dir),

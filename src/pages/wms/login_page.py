@@ -7,6 +7,7 @@ from pages.base_page import BasePage
 class WMSLoginPage(BasePage):
     def open_login(self, base_url: str, login_path: str) -> None:
         self.open(f"{base_url.rstrip('/')}{login_path}")
+        self.page.locator("#username").wait_for(state="visible", timeout=30000)
 
     def login(self, username: str, password: str) -> None:
         self.fill("wms_username", username, [LocatorCandidate("username-id", "#username"), LocatorCandidate("username-name", "input[name='username']")], "WMS 登录用户名输入框")

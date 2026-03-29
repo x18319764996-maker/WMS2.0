@@ -13,6 +13,8 @@ class SystemEndpoint(BaseModel):
 
 class ExecutionSettings(BaseModel):
     browser: str = "chromium"
+    channel: str = ""
+    executable_path: str = ""
     headless: bool = False
     slow_mo: int = 0
     default_timeout_ms: int = 10_000
