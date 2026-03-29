@@ -80,6 +80,7 @@ Linux/Jenkins 可参考 [docs/jenkins.md](docs/jenkins.md)。
 ## 文档入口
 
 - [快速开始](docs/quick_start.md)
+- [项目运行逻辑说明](docs/project_runtime_logic.md)
 - [环境接入说明](docs/integration.md)
 - [二次开发指南](docs/secondary_dev.md)
 - [新增用例模板](docs/case_template.md)
