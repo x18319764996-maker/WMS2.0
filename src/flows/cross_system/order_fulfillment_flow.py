@@ -1,3 +1,5 @@
+"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+
 from __future__ import annotations
 
 from domains.cross_system.context import CrossSystemOrderContext
@@ -9,12 +11,14 @@ from pages.wms.customer_profile_page import WMSCustomerProfilePage
 
 class CrossSystemOrderFulfillmentFlow(BaseFlow):
     def __init__(self, oms_flow: OMSOrderFlow, wms_flow: WMSWarehouseFlow, customer_profile_page: WMSCustomerProfilePage, assertion_assistant, failure_analysis_agent) -> None:
+        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
         super().__init__(assertion_assistant, failure_analysis_agent)
         self.oms_flow = oms_flow
         self.wms_flow = wms_flow
         self.customer_profile_page = customer_profile_page
 
     def run_order_to_warehouse(self, oms_base_url: str, wms_base_url: str, oms_login_path: str, wms_login_path: str, oms_credentials: tuple[str, str], wms_credentials: tuple[str, str], customer_name: str, sku_code: str, quantity: int) -> CrossSystemOrderContext:
+        """中文说明：在 CrossSystemOrderFulfillmentFlow 中执行与 run_order_to_warehouse 相关的操作。"""
         context = CrossSystemOrderContext(sku_code=sku_code)
         self.oms_flow.login(oms_base_url, oms_login_path, *oms_credentials)
         context.order_no = self.oms_flow.create_order(oms_base_url, customer_name, sku_code, quantity)
@@ -28,5 +32,6 @@ class CrossSystemOrderFulfillmentFlow(BaseFlow):
         return context
 
     def jump_from_wms_to_oms(self, wms_base_url: str) -> str:
+        """中文说明：在 CrossSystemOrderFulfillmentFlow 中执行与 jump_from_wms_to_oms 相关的操作。"""
         self.customer_profile_page.open_customer_profile(wms_base_url)
         return self.customer_profile_page.jump_to_oms()

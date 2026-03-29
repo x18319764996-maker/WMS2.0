@@ -68,9 +68,11 @@ src/templates/flow_template.py
 src/templates/page_template.py
 src/templates/test_template.py
 src/utils/__init__.py
+src/utils/run_all_scenarios.py
 src/utils/runtime.py
 src/wms_oms_ai_ui_automation.egg-info/PKG-INFO
 src/wms_oms_ai_ui_automation.egg-info/SOURCES.txt
 src/wms_oms_ai_ui_automation.egg-info/dependency_links.txt
+src/wms_oms_ai_ui_automation.egg-info/entry_points.txt
 src/wms_oms_ai_ui_automation.egg-info/requires.txt
 src/wms_oms_ai_ui_automation.egg-info/top_level.txt

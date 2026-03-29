@@ -1,3 +1,5 @@
+"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -23,6 +25,7 @@ class DecisionTrace:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        """中文说明：在 DecisionTrace 中执行与 to_dict 相关的操作。"""
         return asdict(self)
 
 

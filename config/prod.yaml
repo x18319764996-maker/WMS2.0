@@ -1,3 +1,4 @@
+# 中文说明：本文件定义生产环境下的系统地址、执行参数和报告配置。
 environment: prod
 systems:
   oms:

@@ -1,3 +1,5 @@
+"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -11,10 +13,12 @@ from core.config.models import AISettings
 
 class FailureAnalysisAgent:
     def __init__(self, settings: AISettings, provider: OpenAICompatibleProvider | None = None) -> None:
+        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
         self.settings = settings
         self.provider = provider
 
     def analyze(self, page: Page | None, step_name: str, error: Exception, extra_context: dict[str, Any] | None = None) -> FailureAnalysis:
+        """中文说明：在 FailureAnalysisAgent 中分析与 analyze 相关的操作。"""
         snapshot = ""
         if page:
             try:

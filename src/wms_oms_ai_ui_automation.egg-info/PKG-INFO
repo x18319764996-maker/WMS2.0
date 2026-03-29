@@ -16,6 +16,7 @@ Requires-Dist: tenacity>=9.0.0
 Provides-Extra: dev
 Requires-Dist: ruff>=0.11.2; extra == "dev"
 
+<!-- 中文说明：本文件是项目总览文档，介绍框架目标、结构和基础运行方法。 -->
 # WMS + OMS AI 增强型 UI 自动化框架
 
 这是一个基于 `Python + Playwright + Pytest` 的企业级 UI 自动化框架骨架，面向 `WMS` 和 `OMS` 双系统场景，强调以下能力：
@@ -53,6 +54,37 @@ uv run pytest --collect-only
 set ENABLE_LIVE_UI=true
 uv run pytest -m e2e
 ```
+
+如果希望以后统一执行所有已接入的场景，直接使用项目总入口：
+
+```bash
+python -m uv run run-all-scenarios
+```
+
+Windows 下也可以直接执行：
+
+```bat
+run_all.cmd
+```
+
+如果你想指定运行范围，也可以在后面追加目标参数：
+
+```bat
+run_all.cmd all
+run_all.cmd wms
+run_all.cmd oms
+run_all.cmd cross_system
+run_all.cmd smoke
+run_all.cmd tests\wms\test_login.py
+run_all.cmd wms -k login
+```
+
+补充说明：
+
+- `run_all.cmd` 是 Windows 下的轻量启动脚本，本身只负责透传参数
+- 真正的统一运行逻辑在 [run_all_scenarios.py](src/utils/run_all_scenarios.py)
+- 为了避免 `cmd` 编码差异影响执行，批处理脚本保持极简，中文说明集中放在 Python 入口和文档中
+- 详细脚本说明见 [run_all.cmd.md](run_all.cmd.md)
 
 Linux/Jenkins 可参考 [docs/jenkins.md](docs/jenkins.md)。
 

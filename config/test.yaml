@@ -1,3 +1,4 @@
+# 中文说明：本文件定义测试环境下的系统地址、执行参数和报告配置。
 environment: test
 systems:
   oms:
