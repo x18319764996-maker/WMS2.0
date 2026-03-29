@@ -1,0 +1,7 @@
+create_order:
+  customer_name: 示例客户A
+  order_type: normal
+  sku_code: SKU-001
+  quantity: 10
+search_order:
+  keyword: SO-TEST-001

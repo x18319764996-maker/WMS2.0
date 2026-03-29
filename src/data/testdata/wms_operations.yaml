@@ -1,0 +1,7 @@
+inbound:
+  receipt_no: INBOUND-001
+  sku_code: SKU-001
+inventory:
+  sku_code: SKU-001
+outbound:
+  outbound_no: OUTBOUND-001

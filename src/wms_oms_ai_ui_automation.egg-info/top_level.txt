@@ -1,0 +1,10 @@
+ai
+api
+components
+core
+data
+domains
+flows
+pages
+templates
+utils

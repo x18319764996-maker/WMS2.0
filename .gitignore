@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+artifacts/logs/*
+artifacts/reports/*
+artifacts/screenshots/*
+artifacts/videos/*
+!artifacts/logs/.gitkeep
+!artifacts/reports/.gitkeep
+!artifacts/screenshots/.gitkeep
+!artifacts/videos/.gitkeep
+.env
+playwright-report/
+allure-results/
+allure-report/

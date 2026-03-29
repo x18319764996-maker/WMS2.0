@@ -1,0 +1,73 @@
+Metadata-Version: 2.4
+Name: wms-oms-ai-ui-automation
+Version: 0.1.0
+Summary: AI-enhanced UI automation framework for WMS and OMS
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: allure-pytest>=2.13.5
+Requires-Dist: playwright>=1.52.0
+Requires-Dist: pydantic>=2.8.2
+Requires-Dist: pytest>=8.3.5
+Requires-Dist: pytest-html>=4.1.1
+Requires-Dist: python-dotenv>=1.0.1
+Requires-Dist: pyyaml>=6.0.2
+Requires-Dist: requests>=2.32.3
+Requires-Dist: tenacity>=9.0.0
+Provides-Extra: dev
+Requires-Dist: ruff>=0.11.2; extra == "dev"
+
+# WMS + OMS AI 增强型 UI 自动化框架
+
+这是一个基于 `Python + Playwright + Pytest` 的企业级 UI 自动化框架骨架，面向 `WMS` 和 `OMS` 双系统场景，强调以下能力：
+
+- 业务域组织 + Page Object + Flow 分层
+- UI + API 一体化校验
+- AI 增强定位、自愈、失败分析与报告增强
+- 本地 Windows 调试与 Jenkins Linux 落地
+- 适合测试团队多人协作和长期维护
+
+## 目录说明
+
+- `config/`：环境、日志和运行配置
+- `docs/`：中文使用文档、扩展指南和 Jenkins 说明
+- `src/`：核心框架代码
+- `tests/`：示例用例与 smoke 校验
+- `artifacts/`：日志、截图、视频和报告归档目录
+
+## 快速开始
+
+1. 安装 Python 3.11+。
+2. 安装 `uv`。
+3. 复制 `.env.example` 为 `.env` 并填写真实账号和 AI 参数。
+4. 执行：
+
+```bash
+uv sync
+uv run playwright install chromium
+uv run pytest --collect-only
+```
+
+如需真实执行 UI 用例，请显式开启：
+
+```bash
+set ENABLE_LIVE_UI=true
+uv run pytest -m e2e
+```
+
+Linux/Jenkins 可参考 [docs/jenkins.md](docs/jenkins.md)。
+
+## 默认运行约定
+
+- 本地默认：有头运行，便于调试
+- Jenkins 默认：无头运行，便于持续集成
+- AI 默认：`enhanced`
+- 配置模式：`.env + YAML`
+
+## 文档入口
+
+- [快速开始](docs/quick_start.md)
+- [环境接入说明](docs/integration.md)
+- [二次开发指南](docs/secondary_dev.md)
+- [新增用例模板](docs/case_template.md)
+- [业务域扩展规范](docs/domain_extension.md)
+- [Jenkins 集成说明](docs/jenkins.md)

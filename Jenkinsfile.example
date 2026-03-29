@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        TEST_ENV = 'test'
+        ENABLE_LIVE_UI = 'true'
+        AI_MODE = 'enhanced'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install') {
+            steps {
+                sh 'uv sync'
+                sh 'uv run playwright install --with-deps chromium'
+            }
+        }
+
+        stage('Collect') {
+            steps {
+                sh 'uv run pytest --collect-only'
+            }
+        }
+
+        stage('E2E') {
+            steps {
+                sh 'uv run pytest -m e2e --html=artifacts/reports/pytest-report.html --self-contained-html'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'artifacts/**/*', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
+        }
+    }
+}

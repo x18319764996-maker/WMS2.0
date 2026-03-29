@@ -1,0 +1,37 @@
+environment: test
+systems:
+  oms:
+    base_url: https://oms-test.example.com
+    login_path: /login
+  wms:
+    base_url: http://test.wms-v2.eccang.com
+    login_path: /auth/login
+execution:
+  browser: chromium
+  headless: false
+  slow_mo: 0
+  default_timeout_ms: 10000
+  action_timeout_ms: 12000
+  navigation_timeout_ms: 20000
+  retry_count: 1
+reporting:
+  artifact_root: artifacts
+  screenshot_dir: screenshots
+  video_dir: videos
+  log_dir: logs
+  html_report: artifacts/reports/pytest-report.html
+  allure_dir: allure-results
+ai:
+  mode: enhanced
+  semantic_snapshot_limit: 8000
+  allow_runtime_decision: true
+  audit_log_path: artifacts/logs/ai_decisions.jsonl
+api:
+  timeout_seconds: 15
+  oms_endpoints:
+    order_detail: /api/orders/{order_no}
+    order_search: /api/orders
+  wms_endpoints:
+    inbound_detail: /api/inbound/{receipt_no}
+    inventory_query: /api/inventory
+    outbound_detail: /api/outbound/{outbound_no}
