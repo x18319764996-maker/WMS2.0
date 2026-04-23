@@ -1,4 +1,4 @@
-"""中文说明：本模块封装日期控件的基础交互。"""
+"""日期选择组件，封装日期输入框的填写操作。"""
 
 from __future__ import annotations
 
@@ -6,6 +6,8 @@ from components.base_component import BaseComponent
 
 
 class DatePickerComponent(BaseComponent):
+    """日期选择器组件，通过填写日期字符串设置日期值。"""
+
     def set_date(self, input_selector: str, value: str) -> None:
-        """中文说明：在 DatePickerComponent 中设置与 set_date 相关的操作。"""
+        """向日期输入框填写日期字符串。"""
         self.page.locator(input_selector).fill(value)

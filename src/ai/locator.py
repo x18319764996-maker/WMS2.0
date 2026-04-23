@@ -1,4 +1,9 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""定位器策略与 AI 自愈定位实现。
+
+规则优先（rule-based）策略会依次尝试候选 selector；
+当全部失败且 AI 可用时，将页面 DOM 片段提交给大模型推断最优 selector，
+并在真实页面上二次校验可用性。
+"""
 
 from __future__ import annotations
 
@@ -6,25 +11,36 @@ from typing import Iterable
 
 from playwright.sync_api import Page
 
+from dataclasses import asdict
+
 from ai.models import DecisionTrace, LocatorCandidate, LocatorResolution
 from ai.provider import OpenAICompatibleProvider
 from core.config.models import AISettings
 
 
 class LocatorStrategy:
+    """定位策略抽象基类，定义 resolve 接口供不同策略实现。"""
+
     def resolve(self, page: Page, candidates: Iterable[LocatorCandidate], context: str) -> LocatorResolution:
-        """中文说明：在 LocatorStrategy 中解析与 resolve 相关的操作。"""
+        """解析定位候选，返回可用的 selector 与决策轨迹。"""
         raise NotImplementedError
 
 
 class SelfHealingLocator(LocatorStrategy):
+    """自愈定位器，实现三阶段决策流：规则候选匹配 → AI 推断 → 真实页面二次校验。
+
+    当所有规则候选失败且 AI 可用时，提取页面 DOM 片段调用大模型推断最优 selector，
+    并在真实页面上验证其有效性。全程记录决策轨迹到审计日志。
+    """
+
     def __init__(self, ai_settings: AISettings, provider: OpenAICompatibleProvider | None = None) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入 AI 配置与可选的 Provider。"""
         self.ai_settings = ai_settings
         self.provider = provider
 
     def resolve(self, page: Page, candidates: Iterable[LocatorCandidate], context: str) -> LocatorResolution:
-        """中文说明：在 SelfHealingLocator 中解析与 resolve 相关的操作。"""
+        """依次尝试候选定位；失败时调用 AI 推断并回校结果。"""
+        candidates = list(candidates)
         for candidate in candidates:
             if self._matches(page, candidate.selector):
                 # 中文说明：只要规则定位命中，就直接返回，不进入 AI 自愈分支。
@@ -54,7 +70,7 @@ class SelfHealingLocator(LocatorStrategy):
 
         payload = {
             "context": context,
-            "candidates": [candidate.__dict__ for candidate in candidates],
+            "candidates": [asdict(candidate) for candidate in candidates],
             "dom_excerpt": page.content()[: self.ai_settings.semantic_snapshot_limit],
         }
         response = self.provider.complete_json("heal_locator", payload)
@@ -74,7 +90,7 @@ class SelfHealingLocator(LocatorStrategy):
         return LocatorResolution(selector, "ai", success, trace)
 
     def _matches(self, page: Page, selector: str) -> bool:
-        """中文说明：在 SelfHealingLocator 中判断与 _matches 相关的操作。"""
+        """判断 selector 在当前页面是否命中至少一个元素。"""
         if not selector:
             return False
         try:
@@ -83,6 +99,6 @@ class SelfHealingLocator(LocatorStrategy):
             return False
 
     def _audit(self, trace: DecisionTrace) -> None:
-        """中文说明：在 SelfHealingLocator 中执行与 _audit 相关的操作。"""
+        """将决策轨迹追加到审计日志（如配置了 provider）。"""
         if self.provider:
             self.provider.append_audit_log(trace)

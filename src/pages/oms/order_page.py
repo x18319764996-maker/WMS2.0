@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""OMS 订单页面对象，封装订单创建、搜索和状态读取操作。"""
 
 from __future__ import annotations
 
@@ -9,18 +9,20 @@ from pages.base_page import BasePage
 
 
 class OMSOrderPage(BasePage):
+    """OMS 订单页，支持创建订单、搜索订单和读取订单状态。"""
+
     def __init__(self, page, locator_strategy) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入页面、定位策略，并初始化弹窗和表格组件。"""
         super().__init__(page, locator_strategy)
         self.dialog = DialogComponent(page, locator_strategy)
         self.table = TableComponent(page, locator_strategy)
 
     def open_order_center(self, base_url: str) -> None:
-        """中文说明：在 OMSOrderPage 中打开与 open_order_center 相关的操作。"""
+        """导航到 OMS 订单中心页面。"""
         self.open(f"{base_url.rstrip('/')}/orders")
 
     def create_order(self, customer_name: str, sku_code: str, quantity: int) -> None:
-        """中文说明：在 OMSOrderPage 中创建与 create_order 相关的操作。"""
+        """填写客户、SKU、数量并通过弹窗确认创建新订单。"""
         self.click(
             "create_order",
             [LocatorCandidate("create-button", "text=创建订单"), LocatorCandidate("new-button", "button:has-text('新建')")],
@@ -32,10 +34,10 @@ class OMSOrderPage(BasePage):
         self.dialog.confirm()
 
     def search_order(self, keyword: str) -> None:
-        """中文说明：在 OMSOrderPage 中查询与 search_order 相关的操作。"""
+        """按关键字搜索订单并点击查询按钮。"""
         self.fill("search_order", keyword, [LocatorCandidate("search-input", "input[placeholder*='订单']")], "OMS 订单搜索框")
         self.click("search_button", [LocatorCandidate("search-btn", "button:has-text('查询')")], "OMS 查询按钮")
 
     def current_status_text(self) -> str:
-        """中文说明：在 OMSOrderPage 中执行与 current_status_text 相关的操作。"""
+        """读取表格第一行第一列的文本内容（通常为订单状态）。"""
         return self.page.locator("table tr >> nth=1 td").first.text_content() or ""

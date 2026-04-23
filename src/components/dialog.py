@@ -1,4 +1,4 @@
-"""中文说明：本模块封装弹窗类组件的定位与确认操作。"""
+"""弹窗组件，封装弹窗定位与确认按钮点击操作。"""
 
 from __future__ import annotations
 
@@ -7,8 +7,10 @@ from components.base_component import BaseComponent
 
 
 class DialogComponent(BaseComponent):
+    """弹窗交互组件，支持 Ant Design / Element UI 等常见弹窗框架。"""
+
     def dialog(self):
-        """中文说明：在 DialogComponent 中执行与 dialog 相关的操作。"""
+        """定位当前可见的弹窗元素。"""
         return self.smart_locator(
             "dialog",
             [
@@ -19,5 +21,5 @@ class DialogComponent(BaseComponent):
         )
 
     def confirm(self) -> None:
-        """中文说明：在 DialogComponent 中确认与 confirm 相关的操作。"""
+        """点击弹窗中的"确定"按钮完成确认操作。"""
         self.dialog().get_by_role("button", name="确定").click()

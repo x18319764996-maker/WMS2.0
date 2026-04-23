@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""全局 Pytest 夹具装配中心：初始化配置、浏览器、AI 组件和业务流对象。"""
 
 from __future__ import annotations
 

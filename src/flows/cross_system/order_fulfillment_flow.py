@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""跨系统订单履约业务流，串联 OMS 下单→WMS 入库→WMS 出库的完整链路。"""
 
 from __future__ import annotations
 
@@ -10,15 +10,17 @@ from pages.wms.customer_profile_page import WMSCustomerProfilePage
 
 
 class CrossSystemOrderFulfillmentFlow(BaseFlow):
+    """跨系统订单履约流，组合 OMS 流、WMS 流和客户档案页，实现端到端订单生命周期。"""
+
     def __init__(self, oms_flow: OMSOrderFlow, wms_flow: WMSWarehouseFlow, customer_profile_page: WMSCustomerProfilePage, assertion_assistant, failure_analysis_agent) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入 OMS 流、WMS 流、客户档案页和 AI 辅助组件。"""
         super().__init__(assertion_assistant, failure_analysis_agent)
         self.oms_flow = oms_flow
         self.wms_flow = wms_flow
         self.customer_profile_page = customer_profile_page
 
     def run_order_to_warehouse(self, oms_base_url: str, wms_base_url: str, oms_login_path: str, wms_login_path: str, oms_credentials: tuple[str, str], wms_credentials: tuple[str, str], customer_name: str, sku_code: str, quantity: int) -> CrossSystemOrderContext:
-        """中文说明：在 CrossSystemOrderFulfillmentFlow 中执行与 run_order_to_warehouse 相关的操作。"""
+        """执行完整的 OMS→WMS 履约流程：OMS 登录→创建订单→WMS 登录→入库→出库，返回跨系统上下文。"""
         context = CrossSystemOrderContext(sku_code=sku_code)
         self.oms_flow.login(oms_base_url, oms_login_path, *oms_credentials)
         context.order_no = self.oms_flow.create_order(oms_base_url, customer_name, sku_code, quantity)
@@ -32,6 +34,6 @@ class CrossSystemOrderFulfillmentFlow(BaseFlow):
         return context
 
     def jump_from_wms_to_oms(self, wms_base_url: str) -> str:
-        """中文说明：在 CrossSystemOrderFulfillmentFlow 中执行与 jump_from_wms_to_oms 相关的操作。"""
+        """从 WMS 客户档案页跳转到 OMS 新窗口，返回 OMS 页面 URL。"""
         self.customer_profile_page.open_customer_profile(wms_base_url)
         return self.customer_profile_page.jump_to_oms()

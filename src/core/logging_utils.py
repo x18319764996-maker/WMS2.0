@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""日志配置工具，从 YAML 加载日志格式或降级为 basicConfig。"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import yaml
 
 
 def configure_logging(config_path: Path) -> None:
-    """中文说明：执行与 configure_logging 相关的逻辑。"""
+    """从 YAML 配置文件加载日志格式；文件不存在时降级为 basicConfig。"""
     if config_path.exists():
         with config_path.open("r", encoding="utf-8") as file:
             logging.config.dictConfig(yaml.safe_load(file))
@@ -19,5 +19,5 @@ def configure_logging(config_path: Path) -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """中文说明：获取与 get_logger 相关的逻辑。"""
+    """按名称获取 Logger 实例，用于模块级日志输出。"""
     return logging.getLogger(name)

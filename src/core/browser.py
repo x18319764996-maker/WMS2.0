@@ -1,4 +1,8 @@
-"""中文说明：本模块负责浏览器会话、上下文和页面生命周期管理。"""
+"""浏览器会话管理模块。
+
+统一封装 Playwright 的 Browser / Context / Page 生命周期，
+支持视频录制、超时配置和 headless / channel 等启动参数注入。
+"""
 
 from __future__ import annotations
 
@@ -13,14 +17,16 @@ from core.config.models import AppConfig
 
 
 class BrowserSessionManager:
+    """Playwright 浏览器会话管理器，负责 Browser/Context/Page 的创建、配置和销毁。"""
+
     def __init__(self, config: AppConfig, artifact_manager: ArtifactManager) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入全局配置与产物管理器。"""
         self.config = config
         self.artifact_manager = artifact_manager
 
     @contextmanager
     def page_session(self) -> Iterator[Page]:
-        """中文说明：在 BrowserSessionManager 中执行与 page_session 相关的操作。"""
+        """创建并管理一个独立的浏览器页面会话（含上下文与视频录制）。"""
         self.artifact_manager.ensure_directories()
         with sync_playwright() as playwright:
             browser_type = getattr(playwright, self.config.execution.browser)

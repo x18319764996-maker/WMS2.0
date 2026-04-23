@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""WMS 客户档案页面对象，封装客户档案查看和跨系统跳转操作。"""
 
 from __future__ import annotations
 
@@ -8,16 +8,18 @@ from pages.base_page import BasePage
 
 
 class WMSCustomerProfilePage(BasePage):
+    """WMS 客户档案页，支持打开档案和跳转到 OMS 新窗口。"""
+
     def __init__(self, page, locator_strategy) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入页面、定位策略，并初始化窗口管理组件用于跨系统跳转。"""
         super().__init__(page, locator_strategy)
         self.window_manager = WindowManagerComponent(page, locator_strategy)
 
     def open_customer_profile(self, base_url: str) -> None:
-        """中文说明：在 WMSCustomerProfilePage 中打开与 open_customer_profile 相关的操作。"""
+        """导航到 WMS 客户档案页面。"""
         self.open(f"{base_url.rstrip('/')}/customer-profile")
 
     def jump_to_oms(self) -> str:
-        """中文说明：在 WMSCustomerProfilePage 中执行与 jump_to_oms 相关的操作。"""
+        """点击"跳转OMS"链接，等待新窗口加载并返回其 URL。"""
         popup = self.window_manager.open_popup("a:has-text('跳转OMS')")
         return popup.url

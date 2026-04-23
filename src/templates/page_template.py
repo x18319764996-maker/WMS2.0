@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""页面对象脚手架模板，新建页面对象时可复制此文件并按需修改。"""
 
 from __future__ import annotations
 
@@ -7,12 +7,14 @@ from pages.base_page import BasePage
 
 
 class ExamplePage(BasePage):
+    """示例页面对象，演示导航和操作按钮的基本结构。"""
+
     def open_page(self, base_url: str) -> None:
-        """中文说明：在 ExamplePage 中打开与 open_page 相关的操作。"""
+        """导航到示例页面。"""
         self.open(f"{base_url.rstrip('/')}/example")
 
     def do_action(self) -> None:
-        """中文说明：在 ExamplePage 中执行与 do_action 相关的操作。"""
+        """点击示例操作按钮。"""
         self.click(
             "example_action",
             [

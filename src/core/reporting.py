@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""执行报告收集器，在内存中累积执行记录并一次性落盘为 JSON 文件。"""
 
 from __future__ import annotations
 
@@ -8,16 +8,18 @@ from typing import Any
 
 
 class ExecutionReportCollector:
+    """执行报告收集器，按步骤收集执行记录，在测试结束后统一序列化输出。"""
+
     def __init__(self, output_path: Path) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入报告输出文件路径，并初始化空记录列表。"""
         self.output_path = output_path
         self.records: list[dict[str, Any]] = []
 
     def add_record(self, payload: dict[str, Any]) -> None:
-        """中文说明：在 ExecutionReportCollector 中执行与 add_record 相关的操作。"""
+        """追加一条执行记录到内存列表，等待 flush 时统一落盘。"""
         self.records.append(payload)
 
     def flush(self) -> None:
-        """中文说明：在 ExecutionReportCollector 中落盘输出与 flush 相关的操作。"""
+        """将内存中所有执行记录序列化为 JSON 并写入文件。"""
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.output_path.write_text(json.dumps(self.records, ensure_ascii=False, indent=2), encoding="utf-8")

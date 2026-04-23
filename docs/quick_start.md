@@ -67,9 +67,30 @@ run_all.cmd wms -k login
 - `src/utils/run_all_scenarios.py` 才是统一运行入口
 - 这样做是为了避免批处理文件在不同编码环境下因为中文注释而影响执行
 
-## 6. 常用目录
+## 6. AI 增强配置（可选）
+
+项目内置 AI 增强能力（智能定位自愈、断言辅助、失败分析）。如需启用，在 `.env` 中补齐以下配置：
+
+```bash
+AI_BASE_URL=https://your-api-endpoint/v1   # OpenAI 兼容端点
+AI_API_KEY=sk-xxxx                          # 模型 API Key
+AI_MODEL=glm-5                              # 模型名称
+AI_MAX_RETRIES=5                            # 模型调用最大重试次数
+```
+
+然后设置运行模式：
+
+```bash
+set AI_MODE=enhanced    # 启用 AI 增强（默认）
+set AI_MODE=disabled    # 关闭 AI，仅走规则定位
+```
+
+AI 功能在 `disabled` 模式下完全不调用模型接口，不影响用例正常运行。
+
+## 7. 常用目录
 
 - 日志：`artifacts/logs`
 - 截图：`artifacts/screenshots`
 - 视频：`artifacts/videos`
 - HTML 报告：`artifacts/reports`
+- AI 审计日志：`artifacts/logs/ai_audit.jsonl`（仅 AI 启用时生成）

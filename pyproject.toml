@@ -46,4 +46,5 @@ markers = [
   "wms: WMS domain test cases",
   "cross_system: Cross-system flow cases",
   "smoke: minimal contract validation cases",
+  "ai: AI module tests (may call external API)",
 ]

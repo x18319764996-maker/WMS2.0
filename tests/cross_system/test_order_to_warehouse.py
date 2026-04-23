@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""跨系统订单→仓储全链路测试。"""
 
 import pytest
 
@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.e2e
 @pytest.mark.cross_system
 def test_order_to_warehouse_full_flow(require_live_ui, cross_system_flow, app_config, data_loader, shared_store):
-    """中文说明：执行与 test_order_to_warehouse_full_flow 相关的逻辑。"""
+    """验证 OMS 下单→WMS 入库出库的跨系统订单履约全流程。"""
     oms = app_config.systems["oms"]
     wms = app_config.systems["wms"]
     case_data = data_loader.load_yaml("oms_orders.yaml")

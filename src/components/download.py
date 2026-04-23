@@ -1,4 +1,4 @@
-"""中文说明：本模块封装下载类操作，便于统一处理下载行为。"""
+"""下载组件，封装点击触发下载并保存文件的操作。"""
 
 from __future__ import annotations
 
@@ -8,8 +8,10 @@ from components.base_component import BaseComponent
 
 
 class DownloadComponent(BaseComponent):
+    """文件下载组件，等待浏览器下载事件并将文件保存到指定路径。"""
+
     def expect_download(self, trigger_selector: str, target_path: str | Path) -> Path:
-        """中文说明：在 DownloadComponent 中断言校验与 expect_download 相关的操作。"""
+        """点击触发下载并将文件保存到指定路径，返回保存后的 Path。"""
         with self.page.expect_download() as download_info:
             self.page.locator(trigger_selector).click()
         download = download_info.value

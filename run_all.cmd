@@ -9,6 +9,10 @@ if not defined TEST_ENV set TEST_ENV=test
 if not defined AI_MODE set AI_MODE=disabled
 if not defined HEADLESS set HEADLESS=false
 
-python -m uv run run-all-scenarios %*
+where uv >nul 2>nul (
+    python -m uv run run-all-scenarios %*
+) else (
+    python -m utils.run_all_scenarios %*
+)
 
 endlocal

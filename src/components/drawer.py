@@ -1,4 +1,4 @@
-"""中文说明：本模块封装抽屉类组件的通用操作。"""
+"""抽屉组件，封装侧边抽屉面板的智能定位操作。"""
 
 from __future__ import annotations
 
@@ -7,8 +7,10 @@ from components.base_component import BaseComponent
 
 
 class DrawerComponent(BaseComponent):
+    """侧边抽屉组件，支持 Ant Design 等常见 UI 框架的抽屉定位。"""
+
     def drawer(self):
-        """中文说明：在 DrawerComponent 中执行与 drawer 相关的操作。"""
+        """定位当前可见的侧边抽屉面板。"""
         return self.smart_locator(
             "drawer",
             [

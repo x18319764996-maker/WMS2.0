@@ -1,4 +1,9 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""失败分析代理。
+
+用例失败时自动截取页面快照并调用模型诊断根因，
+同时提供本地兜底分类逻辑（如 Timeout / UI Failure），
+保证在无 AI 环境时也能输出可操作的修复建议。
+"""
 
 from __future__ import annotations
 
@@ -12,13 +17,19 @@ from core.config.models import AISettings
 
 
 class FailureAnalysisAgent:
+    """失败分析代理，提供 AI 诊断与本地兜底两条路径。
+
+    AI 可用时调用模型分析根因和修复建议；AI 不可用时根据异常类型做本地分类
+    （Timeout→timeout / 其他→ui_failure），保证在无 AI 环境也能输出可操作的诊断。
+    """
+
     def __init__(self, settings: AISettings, provider: OpenAICompatibleProvider | None = None) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入 AI 配置与可选 Provider。"""
         self.settings = settings
         self.provider = provider
 
     def analyze(self, page: Page | None, step_name: str, error: Exception, extra_context: dict[str, Any] | None = None) -> FailureAnalysis:
-        """中文说明：在 FailureAnalysisAgent 中分析与 analyze 相关的操作。"""
+        """分析失败步骤的根因，返回结构化诊断结果与决策轨迹。"""
         snapshot = ""
         if page:
             try:

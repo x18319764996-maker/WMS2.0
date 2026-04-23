@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""WMS 登录功能测试。"""
 
 import pytest
 
@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.e2e
 @pytest.mark.wms
 def test_wms_login_success(require_live_ui, wms_flow, app_config, live_page):
-    """中文说明：执行与 test_wms_login_success 相关的逻辑。"""
+    """验证 WMS 登录后成功跳转到首页并显示'首页'文本。"""
     wms = app_config.systems["wms"]
     wms_flow.login(
         wms.base_url,

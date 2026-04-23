@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""OMS 登录页面对象，封装用户名/密码填写和登录提交操作。"""
 
 from __future__ import annotations
 
@@ -7,12 +7,14 @@ from pages.base_page import BasePage
 
 
 class OMSLoginPage(BasePage):
+    """OMS 登录页，包含打开登录页和提交登录凭据两个核心操作。"""
+
     def open_login(self, base_url: str, login_path: str) -> None:
-        """中文说明：在 OMSLoginPage 中打开与 open_login 相关的操作。"""
+        """导航到 OMS 登录页并等待页面就绪。"""
         self.open(f"{base_url.rstrip('/')}{login_path}")
 
     def login(self, username: str, password: str) -> None:
-        """中文说明：在 OMSLoginPage 中执行登录与 login 相关的操作。"""
+        """填写用户名、密码并点击登录按钮。"""
         self.fill(
             "oms_username",
             username,

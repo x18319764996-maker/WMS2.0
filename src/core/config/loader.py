@@ -1,4 +1,12 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""配置加载器。
+
+按优先级合并配置来源：
+    1. .env 环境变量
+    2. config/{env}.yaml 文件
+    3. 运行时环境变量覆盖（如 HEADLESS、BROWSER_CHANNEL）
+
+最终通过 Pydantic 校验为强类型的 AppConfig 对象。
+"""
 
 from __future__ import annotations
 
@@ -14,21 +22,21 @@ from core.exceptions import ConfigurationError
 
 
 class ConfigLoader:
-    """Loads .env and YAML configuration and applies runtime overrides."""
+    """配置加载器，合并 .env、YAML 和运行时环境变量并校验为强类型 AppConfig。"""
 
     def __init__(self, project_root: Path | None = None) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """指定项目根目录；若未提供则自动推断。"""
         self.project_root = project_root or Path(__file__).resolve().parents[3]
         self.config_dir = self.project_root / "config"
 
     def load(self, env_name: str | None = None) -> AppConfig:
-        """中文说明：在 ConfigLoader 中加载与 load 相关的操作。"""
+        """加载并返回指定环境的已校验配置。"""
         # 中文说明：统一按“.env + YAML + 运行时环境变量覆盖”的顺序构建最终配置。
         load_dotenv(self.project_root / ".env", override=False)
         target_env = env_name or os.getenv("TEST_ENV", "test")
         config_path = self.config_dir / f"{target_env}.yaml"
         if not config_path.exists():
-            raise ConfigurationError(f"?????????: {config_path}")
+            raise ConfigurationError(f"配置文件不存在: {config_path}")
 
         raw = self._read_yaml(config_path)
         raw["credentials"] = self._build_credentials().model_dump()
@@ -37,12 +45,12 @@ class ConfigLoader:
         return AppConfig.model_validate(raw)
 
     def _read_yaml(self, path: Path) -> Dict[str, Any]:
-        """中文说明：在 ConfigLoader 中读取与 _read_yaml 相关的操作。"""
+        """安全读取 YAML 文件。"""
         with path.open("r", encoding="utf-8") as file:
             return yaml.safe_load(file) or {}
 
     def _build_credentials(self) -> CredentialSettings:
-        """中文说明：在 ConfigLoader 中构建与 _build_credentials 相关的操作。"""
+        """从环境变量读取账号密码。"""
         return CredentialSettings(
             oms_username=os.getenv("OMS_USERNAME", ""),
             oms_password=os.getenv("OMS_PASSWORD", ""),
@@ -51,7 +59,7 @@ class ConfigLoader:
         )
 
     def _build_ai_settings(self, yaml_ai: Dict[str, Any]) -> AISettings:
-        """中文说明：在 ConfigLoader 中构建与 _build_ai_settings 相关的操作。"""
+        """合并 YAML 中的 AI 配置与环境变量覆盖。"""
         # 中文说明：AI 配置优先读环境变量，便于切换不同模型服务和运行模式。
         merged = dict(yaml_ai)
         merged["mode"] = os.getenv("AI_MODE", merged.get("mode", "enhanced"))
@@ -63,7 +71,7 @@ class ConfigLoader:
         return AISettings.model_validate(merged)
 
     def _apply_execution_overrides(self, yaml_execution: Dict[str, Any]) -> Dict[str, Any]:
-        """中文说明：在 ConfigLoader 中应用与 _apply_execution_overrides 相关的操作。"""
+        """对执行参数应用运行时环境变量覆盖，并在 CI 环境中默认启用 headless。"""
         merged = dict(yaml_execution)
         if os.getenv("BROWSER_CHANNEL"):
             merged["channel"] = os.getenv("BROWSER_CHANNEL", "")

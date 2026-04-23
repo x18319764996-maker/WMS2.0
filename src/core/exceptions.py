@@ -1,8 +1,9 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""自定义异常类型，用于区分配置错误和运行时跳过等特殊控制流。"""
+
 
 class ConfigurationError(RuntimeError):
-    """Raised when required configuration is missing or invalid."""
+    """必需的配置项缺失或值非法时抛出。"""
 
 
 class LiveExecutionSkipped(RuntimeError):
-    """Raised when live UI execution is intentionally skipped."""
+    """真实 UI 执行被主动跳过时抛出（如 ENABLE_LIVE_UI=false）。"""

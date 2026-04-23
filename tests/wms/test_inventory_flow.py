@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""WMS 入库→库存查询→出库完整仓储流程测试。"""
 
 import pytest
 
@@ -6,7 +6,7 @@ import pytest
 @pytest.mark.e2e
 @pytest.mark.wms
 def test_wms_inbound_inventory_and_outbound(require_live_ui, wms_flow, app_config, data_loader):
-    """中文说明：执行与 test_wms_inbound_inventory_and_outbound 相关的逻辑。"""
+    """验证 WMS 入库→库存查询→出库的完整仓储作业流程。"""
     wms = app_config.systems["wms"]
     case_data = data_loader.load_yaml("wms_operations.yaml")
     wms_flow.login(

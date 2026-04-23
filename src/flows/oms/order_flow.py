@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""OMS 订单业务流，串联登录→创建订单→搜索订单→API查询的完整链路。"""
 
 from __future__ import annotations
 
@@ -11,29 +11,31 @@ from pages.oms.order_page import OMSOrderPage
 
 
 class OMSOrderFlow(BaseFlow):
+    """OMS 订单核心业务流，组合登录页、订单页和 API 客户端，提供订单全生命周期操作。"""
+
     def __init__(self, login_page: OMSLoginPage, order_page: OMSOrderPage, api_client: OMSApiClient, assertion_assistant, failure_analysis_agent) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入登录页、订单页、API 客户端和 AI 辅助组件。"""
         super().__init__(assertion_assistant, failure_analysis_agent)
         self.login_page = login_page
         self.order_page = order_page
         self.api_client = api_client
 
     def login(self, base_url: str, login_path: str, username: str, password: str) -> None:
-        """中文说明：在 OMSOrderFlow 中执行登录与 login 相关的操作。"""
+        """打开 OMS 登录页并完成用户认证。"""
         self.login_page.open_login(base_url, login_path)
         self.login_page.login(username, password)
 
     def create_order(self, base_url: str, customer_name: str, sku_code: str, quantity: int) -> str:
-        """中文说明：在 OMSOrderFlow 中创建与 create_order 相关的操作。"""
+        """打开订单中心、填写订单信息并提交，返回生成的订单号。"""
         self.order_page.open_order_center(base_url)
         self.order_page.create_order(customer_name, sku_code, quantity)
         return f"SO-{datetime.now():%Y%m%d%H%M%S}"
 
     def search_order(self, base_url: str, keyword: str) -> None:
-        """中文说明：在 OMSOrderFlow 中查询与 search_order 相关的操作。"""
+        """打开订单中心并按关键字搜索订单。"""
         self.order_page.open_order_center(base_url)
         self.order_page.search_order(keyword)
 
     def fetch_order_detail(self, order_no: str) -> dict:
-        """中文说明：在 OMSOrderFlow 中获取与 fetch_order_detail 相关的操作。"""
+        """通过 API 接口查询指定订单号的详情数据。"""
         return self.api_client.get_order_detail(order_no)

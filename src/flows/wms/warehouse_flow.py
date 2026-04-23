@@ -1,4 +1,4 @@
-"""中文说明：本文件是项目中的 Python 模块，用于承载对应的自动化能力或测试逻辑。"""
+"""WMS 仓储业务流，串联登录→入库→库存查询→出库的完整作业链路。"""
 
 from __future__ import annotations
 
@@ -11,8 +11,10 @@ from pages.wms.outbound_page import WMSOutboundPage
 
 
 class WMSWarehouseFlow(BaseFlow):
+    """WMS 仓储核心业务流，组合 4 个 WMS 页面对象和 API 客户端，提供入库、出库、库存查询等端到端编排。"""
+
     def __init__(self, login_page: WMSLoginPage, inbound_page: WMSInboundPage, inventory_page: WMSInventoryPage, outbound_page: WMSOutboundPage, api_client: WMSApiClient, assertion_assistant, failure_analysis_agent) -> None:
-        """中文说明：初始化当前对象，并注入该对象运行所需的依赖。"""
+        """注入登录页、入库页、库存页、出库页、API 客户端和 AI 辅助组件。"""
         super().__init__(assertion_assistant, failure_analysis_agent)
         self.login_page = login_page
         self.inbound_page = inbound_page
@@ -21,26 +23,26 @@ class WMSWarehouseFlow(BaseFlow):
         self.api_client = api_client
 
     def login(self, base_url: str, login_path: str, username: str, password: str) -> None:
-        """中文说明：在 WMSWarehouseFlow 中执行登录与 login 相关的操作。"""
+        """打开 WMS 登录页并完成用户认证。"""
         self.login_page.open_login(base_url, login_path)
         self.login_page.login(username, password)
 
     def create_inbound(self, base_url: str, receipt_no: str, sku_code: str) -> None:
-        """中文说明：在 WMSWarehouseFlow 中创建与 create_inbound 相关的操作。"""
+        """导航到入库页面并创建指定 SKU 的入库单。"""
         self.inbound_page.open_inbound(base_url)
         self.inbound_page.create_receipt(receipt_no, sku_code)
 
     def query_inventory(self, base_url: str, sku_code: str) -> str:
-        """中文说明：在 WMSWarehouseFlow 中查询与 query_inventory 相关的操作。"""
+        """打开库存页面、按 SKU 搜索并返回匹配行文本。"""
         self.inventory_page.open_inventory(base_url)
         self.inventory_page.search_inventory(sku_code)
         return self.inventory_page.inventory_row_text(sku_code)
 
     def create_outbound(self, base_url: str, outbound_no: str, sku_code: str) -> None:
-        """中文说明：在 WMSWarehouseFlow 中创建与 create_outbound 相关的操作。"""
+        """导航到出库页面并创建指定 SKU 的出库单。"""
         self.outbound_page.open_outbound(base_url)
         self.outbound_page.create_outbound(outbound_no, sku_code)
 
     def fetch_inventory(self, sku_code: str) -> dict:
-        """中文说明：在 WMSWarehouseFlow 中获取与 fetch_inventory 相关的操作。"""
+        """通过 API 接口查询指定 SKU 的实时库存数据。"""
         return self.api_client.query_inventory(sku_code)
